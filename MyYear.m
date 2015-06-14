@@ -50,6 +50,25 @@ classdef MyYear
             end
             l = l(2:end);
         end
+    end
+        
+    methods (Static)
+        function [names, days, refs] = get_holidays()
+            f = fopen('swieta.txt');
+            days = [];
+            names = [];
+            refs = [];
+            while ~feof(f)
+                line = fgetl(f);
+                if ~isempty(line)
+                    x = regexp(line, '_', 'split');
+                    names = [names; x(1)];
+                    refs = [refs; x(3)];
+                    days = [days; str2num(x{2})];
+                end
+            end
+            fclose(f);
+        end
 
     end
     
@@ -90,7 +109,7 @@ classdef MyYear
             obj.holidays(obj.easter) = 'Wielkanoc';
             obj.holidays_names('Wielkanoc') = obj.easter;
             
-            [names, days, refs] = obj.get_holidays();
+            [names, days, refs] = MyYear.get_holidays();
             
             for i = 1:length(days)
                 if obj.holidays_names.isKey(refs{i})
@@ -99,23 +118,6 @@ classdef MyYear
                     obj.holidays_names(names{i}) = x;
                 end
             end
-        end
-        
-        function [names, days, refs] = get_holidays(obj)
-            f = fopen('swieta.txt');
-            days = [];
-            names = [];
-            refs = [];
-            while ~feof(f)
-                line = fgetl(f);
-                if ~isempty(line)
-                    x = regexp(line, '_', 'split');
-                    names = [names; x(1)];
-                    refs = [refs; x(3)];
-                    days = [days; str2num(x{2})];
-                end
-            end
-            fclose(f);
         end
         
     end
