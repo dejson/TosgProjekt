@@ -43,6 +43,14 @@ classdef MyYear
             end
         end
         
+        function l = list_holidays(obj)
+            l = MyDay;
+            for i = obj.holidays_names.keys()
+                l = [l; obj.find_holiday(i{1})];
+            end
+            l = l(2:end);
+        end
+
     end
     
     methods (Access = 'private')
