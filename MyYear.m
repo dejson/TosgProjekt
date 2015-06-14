@@ -14,6 +14,7 @@ classdef MyYear
         % containers.Map is something like dict in python, but with types
         % in this particular Map keys must be ints and values must be chars
         holidays = containers.Map('KeyType', 'uint32', 'ValueType', 'char');
+        holidays_names = containers.Map('KeyType', 'char', 'ValueType', 'uint32');
         easter;
     end
     
@@ -31,6 +32,17 @@ classdef MyYear
                 obj.months(i) = MyMonth(i, obj.year, obj.leap, obj.holidays);
             end
         end
+        
+        function day = find_holiday(obj, holiday)
+            day = MyDay;
+            if obj.holidays_names.isKey(holiday)
+                d = obj.holidays_names(holiday);
+                m = str2num(datestr(double(d), 'mm'));
+                dn = str2num(datestr(double(d), 'dd'));
+                day = obj.months(m).days(dn);
+            end
+        end
+        
     end
     
     methods (Access = 'private')
@@ -65,21 +77,20 @@ classdef MyYear
         end
         
         function obj = calculate_holidays(obj)
-            h_names = containers.Map('KeyType', 'char', 'ValueType', 'uint32');
+            obj.holidays_names = containers.Map('KeyType', 'char', 'ValueType', 'uint32');
             
             obj.holidays(obj.easter) = 'Wielkanoc';
-            h_names('Wielkanoc') = obj.easter;
+            obj.holidays_names('Wielkanoc') = obj.easter;
             
             [names, days, refs] = obj.get_holidays();
             
             for i = 1:length(days)
-                if h_names.isKey(refs{i})
-                    x = h_names(refs{i}) + days(i);
+                if obj.holidays_names.isKey(refs{i})
+                    x = obj.holidays_names(refs{i}) + days(i);
                     obj.holidays(x) = names{i};
-                    h_names(names{i}) = x;
+                    obj.holidays_names(names{i}) = x;
                 end
             end
-            
         end
         
         function [names, days, refs] = get_holidays(obj)
