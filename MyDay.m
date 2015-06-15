@@ -5,6 +5,7 @@ classdef MyDay
     properties (GetAccess = 'public', SetAccess = 'private')
         name = ''
         weekday
+        weeknum
         day
         month
         year
@@ -22,6 +23,7 @@ classdef MyDay
                 obj.year = year;
                 obj.date = datenum(obj.year, obj.month, obj.day);
                 obj.weekday = datestr(obj.date, 'dddd');
+                obj.weeknum = str2num(datestr(obj.date, 'dd'));
 
                 if holidays.isKey(obj.date)
                     obj.name = holidays(obj.date);
